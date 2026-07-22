@@ -1,18 +1,29 @@
 {
-  "description": "SCA-5248: Gradle project with Isolated Projects enabled (org.gradle.unsafe.isolated-projects=true). Unpatched Mend fails to disable the configuration cache and resolves 0 deps; patched Mend resolves the full Gradle tree.",
+  "description": "SCA-5248: Gradle project with Isolated Projects enabled (org.gradle.unsafe.isolated-projects=true). Unpatched Mend cannot disable the configuration cache -> BUILD FAILED / 0 deps; patched Mend (>= 26.5.x) resolves the full Gradle tree. Assertions verified against scan 8bff7a3adf9d4f42af7b41f952f3fd3d (ghc_dev, agent bolt-4-github-scanner 26.5.1-SNAPSHOT / plugin 26.7.1.27): 3 direct + 5 transitive deps, clean scaResults.",
   "version": 1.1,
   "base_config": {
     "validate_scan_output": true,
     "scan_output": {
-      "total_libs_scanned": { "gte": 1 }
+      "total_libs_scanned": { "gte": 5 }
     },
 
     "validate_dependency_tree": true,
     "dependency_tree": {
       "check_dependency_tree_detection_status": true,
+      "check_update_request_sca_results": true,
+      "expected_package_managers": { "contains": ["gradle"] },
       "expected_direct_dependencies_number": { "gte": 3 },
-      "expected_total_dependencies_number": { "gte": 5 },
-      "direct_dependencies_names_list": { "contains": ["guava", "commons-lang3"] },
+      "expected_transitive_dependencies_number": { "gte": 5 },
+      "expected_total_dependencies_number": { "gte": 8 },
+      "direct_dependencies_names_list": { "contains": ["guava", "commons-lang3", "commons-io"] },
+      "transitive_dependencies_names_list": {
+        "contains": ["failureaccess", "listenablefuture", "jspecify", "error_prone_annotations", "j2objc-annotations"]
+      },
+      "expected_dependency_pairs": [
+        { "artifactId": "guava", "version": "33.4.6-jre", "groupId": "com.google.guava" },
+        { "artifactId": "commons-lang3", "version": "3.20.0", "groupId": "org.apache.commons" },
+        { "artifactId": "commons-io", "version": "2.16.1", "groupId": "commons-io" }
+      ],
       "validate_agent_versions": false
     },
 
